@@ -1,0 +1,8 @@
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.csproj.AssemblyReference.cache
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.AssemblyInfoInputs.cache
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.AssemblyInfo.cs
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.csproj.CoreCompileInputs.cache
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\sumey\OneDrive\Masaüstü\Youtube Kanal Listesi Yönetim Projesi\Youtube Kanal Listesi Yönetim\Youtube Kanal Listesi Yönetim\obj\Debug\net8.0\Youtube Kanal Listesi Yönetim.MvcApplicationPartsAssemblyInfo.cache

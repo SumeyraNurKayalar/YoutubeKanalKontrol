@@ -1,0 +1,6 @@
+@Youtube_Kanal_Listesi_Yönetim_HostAddress = http://localhost:5113
+
+GET {{Youtube_Kanal_Listesi_Yönetim_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
