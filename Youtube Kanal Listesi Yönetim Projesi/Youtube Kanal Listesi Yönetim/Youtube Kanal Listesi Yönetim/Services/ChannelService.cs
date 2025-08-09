@@ -61,9 +61,9 @@ namespace Youtube_Kanal_Listesi_Yönetim.Services
                 return Task.FromResult(true);
             }
 
-            // İleride Excel, JSON vs. eklenebilir
             return Task.FromResult(false);
         }
 
     }
 }
+
