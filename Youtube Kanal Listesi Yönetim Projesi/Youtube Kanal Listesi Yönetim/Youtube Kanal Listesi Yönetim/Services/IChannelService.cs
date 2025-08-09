@@ -1,8 +1,7 @@
-using ChannelManagementApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ChannelManagementApi.Services
+namespace Youtube_Kanal_Listesi_Yönetim.Models
 {
     public interface IChannelService
     {
