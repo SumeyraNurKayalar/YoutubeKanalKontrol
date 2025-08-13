@@ -1,24 +1,32 @@
-﻿using Youtube_Kanal_Listesi_Yönetim.Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Youtube_Kanal_Listesi_Yönetim.Data;
+using Youtube_Kanal_Listesi_Yönetim.Models;
+using Channel = Youtube_Kanal_Listesi_Yönetim.Models.Channel;
+
 namespace Youtube_Kanal_Listesi_Yönetim.Services
 {
     public class ChannelService : IChannelService
     {
-        private readonly AppDbContext _context;
+        private readonly IAppDbContext _context;
 
-        public ChannelService(AppDbContext context)
+        public ChannelService(IAppDbContext context)
         {
             _context = context;
         }
 
         public Task<List<Channel>> GetAllChannelsAsync()
         {
-            return Task.FromResult(_context.GetAllChannels());
+            return Task.FromResult(_context.GetAllChannels().Cast<Channel>().ToList());
         }
 
         public Task<List<Channel>> SearchChannelsAsync(string searchTerm)
         {
             var filtered = _context.GetAllChannels()
+                .Cast<Channel>()
                 .Where(c => c.ChannelName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
@@ -28,7 +36,8 @@ namespace Youtube_Kanal_Listesi_Yönetim.Services
         public Task<List<Channel>> FilterChannelsByCategoryAsync(string category)
         {
             var filtered = _context.GetAllChannels()
-                .Where(c => c.Category == category)
+                .Cast<Channel>()
+                .Where(c => c.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             return Task.FromResult(filtered);
@@ -36,35 +45,45 @@ namespace Youtube_Kanal_Listesi_Yönetim.Services
 
         public Task<List<Channel>> SortChannelsBySubscribersAsync(bool descending = false)
         {
+            var channels = _context.GetAllChannels().Cast<Channel>().ToList();
+
             var sorted = descending
-                ? _context.GetAllChannels().OrderByDescending(c => c.Subscribers).ToList()
-                : _context.GetAllChannels().OrderBy(c => c.Subscribers).ToList();
+                ? channels.OrderByDescending(c => int.Parse(c.Subscribers)).ToList()
+                : channels.OrderBy(c => int.Parse(c.Subscribers)).ToList();
 
             return Task.FromResult(sorted);
         }
 
         public Task<bool> ExportChannelsToFileAsync(string filePath, string format)
         {
-            var channels = _context.GetAllChannels();
-
-            if (format.ToLower() == "csv")
+            try
             {
-                using (var writer = new StreamWriter(filePath))
+                var channels = _context.GetAllChannels().Cast<Channel>().ToList();
+
+                if (format.ToLower() == "csv")
                 {
-                    writer.WriteLine("ChannelId,ChannelName,Category,Subscribers,CreatedAt,IsActive");
+                    var lines = new List<string> { "ChannelId,ChannelName,Category,Subscribers,CreatedAt,IsActive" };
+                    lines.AddRange(channels.Select(c =>
+                        $"{c.ChannelId},{c.ChannelName},{c.Category},{c.Subscribers},{c.CreatedAt:yyyy-MM-dd},{c.IsActive}"));
 
-                    foreach (var c in channels)
-                    {
-                        writer.WriteLine($"{c.ChannelId},{c.ChannelName},{c.Category},{c.Subscribers},{c.CreatedAt},{c.IsActive}");
-                    }
+                    File.WriteAllLines(filePath, lines);
+                    return Task.FromResult(true);
                 }
-                return Task.FromResult(true);
+                return Task.FromResult(false);
             }
-
-            return Task.FromResult(false);
+            catch
+            {
+                return Task.FromResult(false);
+            }
         }
+    }
 
+    public interface IChannelService
+    {
+        Task<List<Channel>> GetAllChannelsAsync();
+        Task<List<Channel>> SearchChannelsAsync(string searchTerm);
+        Task<List<Channel>> FilterChannelsByCategoryAsync(string category);
+        Task<List<Channel>> SortChannelsBySubscribersAsync(bool descending);
+        Task<bool> ExportChannelsToFileAsync(string filePath, string format);
     }
 }
-
-
