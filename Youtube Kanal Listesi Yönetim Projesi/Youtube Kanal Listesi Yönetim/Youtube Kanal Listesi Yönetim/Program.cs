@@ -4,6 +4,8 @@ using OfficeOpenXml;
 using System.Reflection;
 using Youtube_Kanal_Listesi_Yönetim.Data;
 using Youtube_Kanal_Listesi_Yönetim.Services;
+using Swashbuckle.AspNetCore.Filters;
+using Youtube_Kanal_Listesi_Yönetim.Examples;
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -11,6 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IAppDbContext>(provider =>
     new AppDbContext(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSwaggerExamplesFromAssemblyOf<ChannelListExample>();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.ExampleFilters();
+});
 
 builder.Services.AddScoped<IChannelService, ChannelService>();
 builder.Services.AddScoped<CsService, CsService>();
