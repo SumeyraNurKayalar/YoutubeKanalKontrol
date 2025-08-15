@@ -1,46 +1,74 @@
-using Microsoft.AspNetCore.Mvc;
-using Youtube_Kanal_Listesi_Yönetim.Models;
-using Youtube_Kanal_Listesi_Yönetim.Services;
-
 namespace Youtube_Kanal_Listesi_Yönetim.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ChannelController : ControllerBase
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.OpenApi.Models;
+    using OfficeOpenXml;
+    using System.Reflection;
+    using Youtube_Kanal_Listesi_Yönetim.Data;
+    using Youtube_Kanal_Listesi_Yönetim.Services;
+    using Swashbuckle.AspNetCore.Filters;
+    using Youtube_Kanal_Listesi_Yönetim.Examples;
+
+    public class Program
     {
-        private readonly Youtube_Kanal_Listesi_Yönetim.Services.IChannelService _channelService;
-
-        public ChannelController(Youtube_Kanal_Listesi_Yönetim.Services.IChannelService channelService)
+        public static void Main(string[] args)
         {
-            _channelService = channelService;
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        [HttpGet]
-        public async Task<ActionResult<List<Channel>>> GetAllChannels()
-        {
-            var channels = await _channelService.GetAllChannelsAsync();
-            return Ok(channels);
-        }
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        [HttpGet("search")]
-        public async Task<ActionResult<List<Channel>>> SearchChannels([FromQuery] string term)
-        {
-            var channels = await _channelService.SearchChannelsAsync(term);
-            return Ok(channels);
-        }
+            builder.Services.AddSingleton<IAppDbContext>(provider =>
+                new AppDbContext(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        [HttpGet("filter")]
-        public async Task<ActionResult<List<Channel>>> FilterByCategory([FromQuery] string category)
-        {
-            var channels = await _channelService.FilterChannelsByCategoryAsync(category);
-            return Ok(channels);
-        }
+            builder.Services.AddScoped<IChannelService, ChannelService>();
+            builder.Services.AddScoped<CsService, CsService>();
+            builder.Services.AddScoped<ExcelService, ExcelService>();
 
-        [HttpGet("sort")]
-        public async Task<ActionResult<List<Channel>>> SortBySubscribers([FromQuery] bool descending = false)
-        {
-            var channels = await _channelService.SortChannelsBySubscribersAsync(descending);
-            return Ok(channels);
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerExamplesFromAssemblyOf<ChannelListExample>();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "YouTube Kanal Yönetim API",
+                    Version = "v1",
+                    Description = "YouTube kanallarını CSV/Excel üzerinden içe/dışa aktarma, listeleme, filtreleme ve sıralama için API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Proje Ekibi",
+                        Email = "destek@youtubeapi.com"
+                    }
+                });
+
+                c.ExampleFilters();
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
+            });
+
+            var app = builder.Build();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "YouTube Kanal API v1");
+                c.RoutePrefix = string.Empty;
+            });
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.Run();
         }
     }
 }
